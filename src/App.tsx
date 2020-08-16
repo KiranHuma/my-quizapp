@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { fetchQuizQuestions ,fetchdifficultQuizQuestions,fetchMediumQuizQuestions} from './API';
+import { fetchQuizQuestions, fetchdifficultQuizQuestions, fetchMediumQuizQuestions } from './API';
 // Components
 import QuestionCard from './components/QuestionCard';
 // types
 import { QuestionsState, Difficulty } from './API';
 // Styles
 import { GlobalStyle, Wrapper } from './App.styles';
+// import firebase from 'firebase';
+import { initNotification } from './services/firebaseService'
+
 
 export type AnswerObject = {
   question: string;
@@ -24,14 +27,14 @@ const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
 
-  
-    const startdificult = async () => {
-      setLoading(true);
-      setGameOver(false);
+
+  const startdificult = async () => {
+    setLoading(true);
+    setGameOver(false);
     const newQuestionshard = await fetchdifficultQuizQuestions(
       TOTAL_QUESTIONS,
       Difficulty.HARD,
-      
+
     );
     setQuestions(newQuestionshard);
     setScore(0);
@@ -43,19 +46,19 @@ const App: React.FC = () => {
   const startmedium = async () => {
     setLoading(true);
     setGameOver(false);
-  const newQuestionshard = await fetchMediumQuizQuestions(
-    TOTAL_QUESTIONS,
-    Difficulty.MEDIUM,
-    
-  );
-  setQuestions(newQuestionshard);
-  setScore(0);
-  setUserAnswers([]);
-  setNumber(0);
-  setLoading(false);
-};
+    const newQuestionshard = await fetchMediumQuizQuestions(
+      TOTAL_QUESTIONS,
+      Difficulty.MEDIUM,
 
-  
+    );
+    setQuestions(newQuestionshard);
+    setScore(0);
+    setUserAnswers([]);
+    setNumber(0);
+    setLoading(false);
+  };
+
+
   const startTrivia = async () => {
     setLoading(true);
     setGameOver(false);
@@ -99,32 +102,32 @@ const App: React.FC = () => {
       setNumber(nextQ);
     }
   };
-
+  initNotification();
   return (
     <>
       <GlobalStyle />
       <Wrapper>
         <h1>REACT QUIZ</h1>
 
-    
+
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
           <button className='start' onClick={startTrivia}>
             EASY
           </button>
         ) : null}
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
-        <button className='start' onClick={startmedium}>
+          <button className='start' onClick={startmedium}>
             MEDIUM
           </button>
-           ) : null}
+        ) : null}
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
-        <button className='start' onClick={startdificult}>
+          <button className='start' onClick={startdificult}>
             HARD
           </button>
-          
-           ) : null}
-          
-        
+
+        ) : null}
+
+
         {!gameOver ? <p className='score'>Score: {score}</p> : null}
         {loading ? <p>Loading Questions...</p> : null}
         {!loading && !gameOver && (
@@ -142,6 +145,9 @@ const App: React.FC = () => {
             Next Question
           </button>
         ) : null}
+        {/* <button onClick={initNotification}>
+        Configure Notification
+      </button> */}
       </Wrapper>
     </>
   );
